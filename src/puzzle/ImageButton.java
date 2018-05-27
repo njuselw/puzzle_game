@@ -1,5 +1,6 @@
 package puzzle;
 
+import java.awt.Font;
 import java.awt.Image;
 
 import javax.swing.ImageIcon;
@@ -29,9 +30,9 @@ public class ImageButton extends JButton{
 	private int num;
 	private String picName;
 	
-	public ImageButton(int col, int row, int length, int num, String picName) {
-		this.col = col;
+	public ImageButton(int row, int col, int length, int num, String picName) {
 		this.row = row;
+		this.col = col;
 		this.length = length;
 		this.num = num;
 		this.picName = picName;
@@ -41,11 +42,14 @@ public class ImageButton extends JButton{
 	//∏¯∞¥≈•…Ë÷√Õº∆¨
 	public void setImage(boolean isShow) {
 		if (isShow) {
-			String imagePath = "images/" + picName + "/" + num + ".jpg";
+			String imagePath = "images/" + picName + "/" + num + ".png";
 			ImageIcon icon = new ImageIcon(imagePath);
 			icon.setImage(icon.getImage().getScaledInstance(length, length, Image.SCALE_DEFAULT));
 			this.setIcon(icon);
+			this.setFont(new Font("Dialog", 1, 40));
+			this.setText(String.valueOf(num));
 		} else {
+			this.setText("");
 			this.setIcon(null);
 		}
 	}
