@@ -30,24 +30,29 @@ public class ImageButton extends JButton{
 	private int num;
 	private String picName;
 	
-	public ImageButton(int row, int col, int length, int num, String picName) {
+	public ImageButton(int row, int col, int length, int num, String picName, boolean isPic) {
 		this.row = row;
 		this.col = col;
 		this.length = length;
 		this.num = num;
 		this.picName = picName;
-		setImage(true);
+		setImage(true, isPic);
 	}
 	
 	//∏¯∞¥≈•…Ë÷√Õº∆¨
-	public void setImage(boolean isShow) {
+	public void setImage(boolean isShow, boolean isPic) {
 		if (isShow) {
-			String imagePath = "images/" + picName + "/" + num + ".png";
-			ImageIcon icon = new ImageIcon(imagePath);
-			icon.setImage(icon.getImage().getScaledInstance(length, length, Image.SCALE_DEFAULT));
-			this.setIcon(icon);
-			this.setFont(new Font("Dialog", 1, 40));
-			this.setText(String.valueOf(num));
+			if (isPic) {
+				String imagePath = "image/" + picName + "/" + num + ".png";
+				ImageIcon icon = new ImageIcon(imagePath);
+				icon.setImage(icon.getImage().getScaledInstance(length, length, Image.SCALE_DEFAULT));
+				this.setIcon(icon);
+				this.setText("");
+			} else {
+				this.setFont(new Font("Dialog", 1, 40));
+				this.setText(String.valueOf(num));
+				this.setIcon(null);
+			}
 		} else {
 			this.setText("");
 			this.setIcon(null);

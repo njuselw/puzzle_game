@@ -45,11 +45,13 @@ public class MainUI extends JFrame {
     private JMenuItem rankItem = new JMenuItem("玩家排行榜");
     private JMenuItem exitItem = new JMenuItem("退出");
     private JMenuItem gradeItem = new JMenuItem("难度设置");
-    private JMenuItem picItem = new JMenuItem("魔板设置");
+    private JMenuItem picItem = new JMenuItem("魔板设置开");
+    private JMenuItem nextPicItem = new JMenuItem("下一张背景图");
     private JMenuItem musicItem = new JMenuItem("背景音乐开");
-    private JMenuItem nextItem = new JMenuItem("下一首背景音乐");
+    private JMenuItem nextMusicItem = new JMenuItem("下一首背景音乐");
     
-    int isPause = 0;    
+    boolean isPic = false;//是否有背景图片
+    int isPause = 0;//是否暂停    
     private int grade = 3; //默认难度为3，即3*3式拼图
     private String[] picNameList = {"1", "2", "3"};
     private String[] musicList = {"1", "2", "3"};
@@ -93,8 +95,9 @@ public class MainUI extends JFrame {
     	exitItem.addActionListener(new MenuItemActionListener());
     	gradeItem.addActionListener(new MenuItemActionListener());
     	picItem.addActionListener(new MenuItemActionListener());
+    	nextPicItem.addActionListener(new MenuItemActionListener());
     	musicItem.addActionListener(new MenuItemActionListener());
-    	nextItem.addActionListener(new MenuItemActionListener());
+    	nextMusicItem.addActionListener(new MenuItemActionListener());
     	
     	menuBar = new JMenuBar();
     	gameMenu.add(startItem);
@@ -107,11 +110,15 @@ public class MainUI extends JFrame {
     	gameMenu.add(rankItem);
     	gameMenu.add(exitItem);
     	menuBar.add(gameMenu);
-    	nextItem.setEnabled(false);
+    	nextPicItem.setEnabled(false);
+    	nextMusicItem.setEnabled(false);
     	settingsMenu.add(gradeItem);
+    	settingsMenu.addSeparator();
     	settingsMenu.add(picItem);
+    	settingsMenu.add(nextPicItem);
+    	settingsMenu.addSeparator();
     	settingsMenu.add(musicItem);
-    	settingsMenu.add(nextItem);
+    	settingsMenu.add(nextMusicItem);
     	menuBar.add(settingsMenu);
     	
     	
@@ -142,7 +149,7 @@ public class MainUI extends JFrame {
     	
     	for (int i = 0; i < grade; i++) {
     		for (int j = 0; j < grade; j++) {
-    			ImageButton ib = new ImageButton(i, j, 450 / grade, numField[i][j], picNameList[picIndex]);
+    			ImageButton ib = new ImageButton(i, j, 450 / grade, numField[i][j], picNameList[picIndex], isPic);
     			imagePanel.add(ib);
     			btnField[i][j] = ib;
     			ib.addActionListener(new ImageButtonActionListener());
@@ -151,7 +158,7 @@ public class MainUI extends JFrame {
     	
     	blankRow = grade - 1;
     	blankCol = grade - 1;
-    	btnField[blankRow][blankCol].setImage(false);
+    	btnField[blankRow][blankCol].setImage(false, isPic);
     	
     }
     
@@ -270,12 +277,20 @@ public class MainUI extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				nextItem.setEnabled(true);
+				nextMusicItem.setEnabled(true);
 			} else if (cmd.equals("背景音乐关")) {
 				musicItem.setText("背景音乐开");
 				a.stop();
-				nextItem.setEnabled(false);
-			} else if (cmd.equals("魔板设置")) {
+				nextMusicItem.setEnabled(false);
+			} else if (cmd.equals("魔板设置开")) {
+				isPic = true;
+				picItem.setText("魔板设置关");
+				nextPicItem.setEnabled(true);
+			} else if (cmd.equals("魔板设置关")) {
+				isPic = false;
+				picItem.setText("魔板设置开");
+				nextPicItem.setEnabled(false);
+			} else if (cmd.equals("下一张背景图")) { 
 				picIndex = (picIndex + 1) % 3;
 			} else if (cmd.equals("下一首背景音乐")) {
 				musicIndex = (musicIndex + 1) % 3;
@@ -310,8 +325,8 @@ public class MainUI extends JFrame {
 					System.out.println(temp + " " +btnField[blankRow][blankCol].getNum());
 					btnField[row][col].setNum(btnField[blankRow][blankCol].getNum());
 		            btnField[blankRow][blankCol].setNum(temp);
-		            btnField[blankRow][blankCol].setImage(true);
-		            btnField[row][col].setImage(false);
+		            btnField[blankRow][blankCol].setImage(true, isPic);
+		            btnField[row][col].setImage(false, isPic);
 		            
 		            temp = numField[row][col];
 		            numField[row][col] = numField[blankRow][blankCol];
@@ -322,7 +337,7 @@ public class MainUI extends JFrame {
 		            
 		            if (isGameOver()) {
 		            	String name = JOptionPane.showInputDialog("你赢了，告诉我们你的姓名吧！");
-		            	Player p = new Player(name, timeLabel.getText(), grade);
+		            	Player p = new Player(name, time, grade);
 		            	PlayerMethod pm = new PlayerMethod();
 		            	pm.add(p);
 		            	
