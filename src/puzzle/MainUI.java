@@ -50,6 +50,7 @@ public class MainUI extends JFrame {
     private JMenuItem musicItem = new JMenuItem("背景音乐开");
     private JMenuItem nextMusicItem = new JMenuItem("下一首背景音乐");
     
+    boolean isRun = false;//是否游戏中
     boolean isPic = false;//是否有背景图片
     int isPause = 0;//是否暂停    
     private int grade = 3; //默认难度为3，即3*3式拼图
@@ -139,6 +140,7 @@ public class MainUI extends JFrame {
     	timeLabel.setText(getStringTime());
     	imagePanel.setBackground(Color.ORANGE);
     	
+    	isRun  = true;
     	time = 0;
     	
     	init();
@@ -232,12 +234,14 @@ public class MainUI extends JFrame {
 			} else if (cmd.equals("暂停")) {
 			    timeLabel.setText("暂停");
 			    isPause = 1;
+			    isRun = false;
 			    timer.cancel();
 			    pauseItem.setText("继续");
 			} else if (cmd.equals("继续")) {
 				timeLabel.setText(getStringTime());
 				startThread();
 				isPause = 0;
+				isRun = true;
 				pauseItem.setText("暂停");
 			} else if (cmd.equals("停止")) {
 				timer.cancel();
@@ -248,6 +252,7 @@ public class MainUI extends JFrame {
 				pauseItem.setText("暂停");
 				pauseItem.setEnabled(false);
 				stopItem.setEnabled(false);
+				isRun = false;
 			} else if (cmd.equals("玩家排行榜")) {
 				RankUI r = new RankUI();
 			} else if (cmd.equals("难度设置")) {
@@ -266,6 +271,11 @@ public class MainUI extends JFrame {
 					} else {
 						JOptionPane.showMessageDialog(frame, "请输入数字！！","warning",JOptionPane.WARNING_MESSAGE);
 					}
+					if (isRun) {
+						startGame();
+						startThread();
+					}
+					
 				}
 			} else if (cmd.equals("背景音乐开")) {			
 				musicItem.setText("背景音乐关");
@@ -286,12 +296,27 @@ public class MainUI extends JFrame {
 				isPic = true;
 				picItem.setText("魔板设置关");
 				nextPicItem.setEnabled(true);
+				
+				if (isRun) {
+					startGame();
+					startThread();
+				}				
 			} else if (cmd.equals("魔板设置关")) {
 				isPic = false;
 				picItem.setText("魔板设置开");
 				nextPicItem.setEnabled(false);
+				
+				if (isRun) {
+					startGame();
+					startThread();
+				}
 			} else if (cmd.equals("下一张背景图")) { 
 				picIndex = (picIndex + 1) % 3;
+				if (isRun) {
+					startGame();
+					startThread();
+				}
+				
 			} else if (cmd.equals("下一首背景音乐")) {
 				musicIndex = (musicIndex + 1) % 3;
 				a.stop();
@@ -342,6 +367,7 @@ public class MainUI extends JFrame {
 		            	pm.add(p);
 		            	
 		            	//将游戏界面还原
+		            	timer.cancel();
 		            	timeLabel.setText("");
 						imagePanel.removeAll();
 						imagePanel.setBackground(Color.GRAY);
